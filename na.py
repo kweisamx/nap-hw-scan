@@ -49,7 +49,16 @@ def check_web(test_name,test_type,url=None):
 			print("%s is OK , WEB TXT is right"%test_name)
 		else:raise
 
-
+def check_slave(test_name,test_domain):
+	test = check_output(["dig","+short","ns",test_domain])
+	soa = check_output(["dig","+short","soa",test_domain])
+	ns =  test.strip().split("\n")	
+	for eachns in ns:
+		test_ns_soa = check_output(["dig","+short","soa","@"+eachns,test_domain])
+		if soa == test_ns_soa:
+			print("the ns %s is fine"%eachns)
+		else:
+			raise
 
 member = [("nctusam.idv.tw.","139.59.102.151")]
 while(1):
@@ -57,7 +66,7 @@ while(1):
 		print(bcolors.OKBLUE+"************NOW WE CHECK NA**************"+bcolors.ENDC)
 		print("domain name :"+each[0])
 		print("ip address :"+each[1])
-		print(bcolors.HEADER+"************NA-HW1**************"+bcolors.ENDC)
+		print(bcolors.HEADER+"************NA-HW1-2**************"+bcolors.ENDC)
 		#test DNS1 CNAME
 		DNS1 = 'NAP2016-DNS1.nasa.'+each[0]
 		#test DNS2 A record
@@ -73,9 +82,18 @@ while(1):
 		check_dns(DNS2,"test_A record","A",ip=each[1])
 		check_web("test_WEB1_flag","FLAG",url=WEB1_flag)
 		check_web("test_WEB1_TXT","txt",url=WEB1_DNS_TXT)
-		print(bcolors.OKGREEN+"***********HW1 OK!!***************"+bcolors.ENDC)
+		print(bcolors.OKGREEN+"***********HW1-2 OK!!***************"+bcolors.ENDC)
+		print(bcolors.HEADER+"************NA-Slave alive or serial is syn**************"+bcolors.ENDC)
+		check_slave("test_salve",each[0])	
+		print(bcolors.OKGREEN+"************NA-Slave all is fine**************"+bcolors.ENDC)
+
+
+
+
+
+
 		print(bcolors.WARNING+"***********WAIT FOR NEXT CHECK!!***************"+bcolors.ENDC)
-		sleep(30)
+		sleep(1800)
 	
 	
 	
